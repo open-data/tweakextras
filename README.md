@@ -8,5 +8,5 @@ tweakextras.
 
 Bulk add, update and remove dataset extras from the command line.
 
-By default Takes datasets in JSON lines format on stdin to select
-datasets to change. Uses latest data from CKAN when updating.
+By default takes datasets in JSON lines format on stdin to select
+datasets to change. Uses latest data from CKAN when updating extras.

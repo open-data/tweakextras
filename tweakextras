@@ -21,6 +21,10 @@ Options:
 This command re-reads each dataset before updating the extras to minimize
 the potential for data loss due to a user editing the dataset at the same
 time.
+
+Output includes the names/ids of datasets being updated followed by
+extraname(d) for deleted extras, extraname(=) for updated extras and
+extraname(+) for added extras.
 """
 
 __version__ = '0.1'

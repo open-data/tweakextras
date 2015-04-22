@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+"""
+perform adjustments on dataset extras
+
+Usage:
+  tweakextras [-u ID_OR_NAME ...] [EXTRA=VALUE ...] [-d EXTRA ...]
+              [-r SITE_URL] [-a APIKEY]
+  tweakextras -h
+  tweakextras --version
+
+Options:
+  -h                       show this screen
+  --version                show version
+  -a --apikey              API key to use for remote actions
+  -d --delete=EXTRA        remove extra if present
+  -u --update=ID_OR_NAME   specify datasets to update on command line
+                           instead of reading json lines on stdin
+  -r --remote=SITE_URL     URL of CKAN server
+                           [default: http://ndmckand1.statcan.ca/zj]
+
+This command re-reads each dataset before updating the extras to minimize
+the potential for data loss due to a user editing the dataset at the same
+time.
+"""
+
+__version__ = '0.1'
+
+from docopt import docopt
+import ckanapi
+import json
+import sys
+
+def main():
+    arguments = docopt(__doc__, version=__version__)
+    ckan = ckanapi.RemoteCKAN(arguments['--remote'],
+        apikey=arguments['--apikey'],
+        user_agent="tweakextras/{version}".format(version=__version__))
+
+    datasets = arguments['--update']
+    if not datasets:
+        datasets = ids_from_stdin()
+
+    for name in datasets:
+        print name,
+
+        d = ckan.action.package_show(id=name)
+        
+        extras = dict((e['key'], e['value']) for e in d['extras'])
+        for ename in arguments['--delete']:
+            if ename in extras:
+                del extras[ename]
+                print ename + '(d)',
+
+        for kv in arguments['EXTRA=VALUE']:
+            kv = kv.decode('utf-8')
+            ename, value = kv.split('=', 1)
+            print ename + ('(=)' if ename in extras else '(+)'),
+            extras[ename] = value
+
+        d['extras'] = [{'key': k, 'value': v} for (k, v) in extras.items()]
+        print
+        ckan.action.package_update(**d)
+
+
+def ids_from_stdin():
+    for ln in sys.stdin.read():
+        yield json.loads(ln)['id']
+
+main()

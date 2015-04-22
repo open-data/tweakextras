@@ -3,7 +3,7 @@
 perform adjustments on dataset extras
 
 Usage:
-  tweakextras [-u ID_OR_NAME ...] [EXTRA=VALUE ...] [-d EXTRA ...]
+  tweakextras [-u ID_OR_NAME ...] (EXTRA=VALUE | -d EXTRA) ...
               [-r SITE_URL] [-a APIKEY]
   tweakextras -h
   tweakextras --version
@@ -43,10 +43,6 @@ def main():
     datasets = arguments['--update']
     if not datasets:
         datasets = ids_from_stdin()
-
-    if not arguments['--delete'] and not arguments['EXTRA=VALUE']:
-        print "Please specify extras to set or delete"
-        sys.exit(1)
 
     for name in datasets:
         print name,

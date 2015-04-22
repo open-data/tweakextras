@@ -50,16 +50,16 @@ def main():
         d = ckan.action.package_show(id=name)
         
         extras = dict((e['key'], e['value']) for e in d['extras'])
-        for ename in arguments['--delete']:
-            if ename in extras:
-                del extras[ename]
-                print ename + '(d)',
-
         for kv in arguments['EXTRA=VALUE']:
             kv = kv.decode('utf-8')
             ename, value = kv.split('=', 1)
             print ename + ('(=)' if ename in extras else '(+)'),
             extras[ename] = value
+
+        for ename in arguments['--delete']:
+            if ename in extras:
+                del extras[ename]
+                print ename + '(d)',
 
         d['extras'] = [{'key': k, 'value': v} for (k, v) in extras.items()]
         print

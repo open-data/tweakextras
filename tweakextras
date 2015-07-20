@@ -12,7 +12,7 @@ Usage:
 Options:
   -h                       show this screen
   --version                show version
-  -a --apikey              API key to use for remote actions
+  -a --apikey=APIKEY       API key to use for remote actions
   -d --delete=EXTRA        remove extra if present
   -u --update=ID_OR_NAME   specify datasets to update on command line
                            instead of reading json lines on stdin
@@ -28,7 +28,7 @@ extraname(d) for deleted extras, extraname(=) for updated extras and
 extraname(+) for added extras.
 """
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 from docopt import docopt
 import ckanapi
@@ -38,7 +38,7 @@ import sys
 def main():
     arguments = docopt(__doc__, version=__version__)
     ckan = ckanapi.RemoteCKAN(arguments['--remote'],
-        apikey=arguments['APIKEY'],
+        apikey=arguments['--apikey'],
         user_agent="tweakextras/{version}".format(version=__version__))
 
     datasets = arguments['--update']

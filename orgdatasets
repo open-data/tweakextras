@@ -10,12 +10,12 @@ Usage:
 Options:
   -h                    show this screen
   --version             show version
-  -a --apikey           API key to use for remote actions
+  -a --apikey=APIKEY    API key to use for remote actions
   -r --remote=SITE_URL  URL of CKAN server
                         [default: http://ndmckand1.statcan.ca/zj]
 """
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 from docopt import docopt
 import ckanapi

@@ -3,8 +3,9 @@
 perform adjustments on dataset extras
 
 Usage:
-  tweakextras [-u ID_OR_NAME ...] (EXTRA=VALUE | -d EXTRA) ...
-              [-r SITE_URL] [-a APIKEY]
+  tweakextras [-u ID_OR_NAME ...] [-r SITE_URL] [-a APIKEY]
+              (EXTRA=VALUE | -d EXTRA) ...
+
   tweakextras -h
   tweakextras --version
 
@@ -37,7 +38,7 @@ import sys
 def main():
     arguments = docopt(__doc__, version=__version__)
     ckan = ckanapi.RemoteCKAN(arguments['--remote'],
-        apikey=arguments['--apikey'],
+        apikey=arguments['APIKEY'],
         user_agent="tweakextras/{version}".format(version=__version__))
 
     datasets = arguments['--update']

@@ -3,7 +3,7 @@
 perform adjustments on dataset extras
 
 Usage:
-  tweakextras [-u ID_OR_NAME ...] [-r SITE_URL] [-a APIKEY]
+  tweakextras [ -n ] [-u ID_OR_NAME ...] [-r SITE_URL] [-a APIKEY]
               (EXTRA=VALUE | -d EXTRA) ...
 
   tweakextras -h
@@ -12,6 +12,7 @@ Usage:
 Options:
   -h                       show this screen
   --version                show version
+  -n --no-overwrite        do not overwrite existing values
   -a --apikey=APIKEY       API key to use for remote actions
   -d --delete=EXTRA        remove extra if present
   -u --update=ID_OR_NAME   specify datasets to update on command line
@@ -24,16 +25,17 @@ the potential for data loss due to a user editing the dataset at the same
 time.
 
 Output includes the names/ids of datasets being updated followed by
-extraname(d) for deleted extras, extraname(=) for updated extras and
-extraname(+) for added extras.
+extraname(d) for deleted extras, extraname(=) for updated extras,
+extraname(#) for ignored extras and extraname(+) for added extras.
 """
 
-__version__ = '0.2'
+__version__ = '0.3'
 
 from docopt import docopt
 import ckanapi
 import json
 import sys
+
 
 def main():
     arguments = docopt(__doc__, version=__version__)
@@ -54,8 +56,15 @@ def main():
         for kv in arguments['EXTRA=VALUE']:
             kv = kv.decode('utf-8')
             ename, value = kv.split('=', 1)
-            print ename + ('(=)' if ename in extras else '(+)'),
-            extras[ename] = value
+            if ename in extras:
+                if extras[ename] and arguments['--no-overwrite']:
+                    print ename + '(#)',
+                else:
+                    extras[ename] = value
+                    print ename + '(=)',
+            else:
+                extras[ename] = value
+                print ename + '(+)',
 
         for ename in arguments['--delete']:
             if ename in extras:
@@ -68,7 +77,7 @@ def main():
 
 
 def ids_from_stdin():
-    for ln in sys.stdin.read():
+    for ln in sys.stdin.readlines():
         yield json.loads(ln)['id']
 
 main()

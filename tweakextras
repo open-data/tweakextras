@@ -77,7 +77,7 @@ def main():
 
 
 def ids_from_stdin():
-    for ln in sys.stdin.readlines():
+    for ln in sys.stdin:
         yield json.loads(ln)['id']
 
 main()
